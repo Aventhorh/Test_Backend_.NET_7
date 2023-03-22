@@ -3,7 +3,8 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace Dotnet7Learning.Controllers
+
+namespace Test_Backend_NET_7.Controllers
 {
     [ApiController]
     [Route("api/[controller]")]
@@ -34,7 +35,7 @@ namespace Dotnet7Learning.Controllers
             return Ok(await _postService.AddPost(newPost));
         }
 
-        [HttpPut]
+        [HttpPut, Authorize(Roles = "User")]
         public async Task<ActionResult<ServiceResponse<GetPostDto>>> UpdatePost(UpdatePostDto updatedPost)
         {
             var response = await _postService.UpdatePost(updatedPost);

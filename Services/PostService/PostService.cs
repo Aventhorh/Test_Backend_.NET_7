@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace Dotnet7Learning.Services.PostService
+namespace Test_Backend_NET_7.Services.PostService
 {
     public class PostService : IPostService
     {
@@ -40,8 +40,8 @@ namespace Dotnet7Learning.Services.PostService
         public async Task<ServiceResponse<GetPostDto>> GetPostById(int id)
         {
             var serviceResponse = new ServiceResponse<GetPostDto>();
-            var dbPost = await _context.Posts.FirstOrDefaultAsync(c => c.Id == id);
-            serviceResponse.Data = _mapper.Map<GetPostDto>(dbPost);
+            var post = await _context.Posts.FirstOrDefaultAsync(c => c.Id == id);
+            serviceResponse.Data = _mapper.Map<GetPostDto>(post);
             return serviceResponse;
         }
 
@@ -50,13 +50,14 @@ namespace Dotnet7Learning.Services.PostService
             var serviceResponse = new ServiceResponse<GetPostDto>();
             try
             {
-                var dbPost = await _context.Posts.FirstOrDefaultAsync(c => c.Id == updatedPost.Id);
-                if (dbPost is null) throw new Exception($"Post with Id '{updatedPost.Id}' not found.");
+                var post = await _context.Posts.FirstOrDefaultAsync(c => c.Id == updatedPost.Id);
+                if (post is null) throw new Exception($"Post with Id '{updatedPost.Id}' not found.");
 
-                dbPost.Name = updatedPost.Name;
-                dbPost.Description = updatedPost.Description;
+                post.Name = updatedPost.Name;
+                post.Description = updatedPost.Description;
+                await _context.SaveChangesAsync();
 
-                serviceResponse.Data = _mapper.Map<GetPostDto>(dbPost);
+                serviceResponse.Data = _mapper.Map<GetPostDto>(post);
             }
             catch (Exception ex)
             {

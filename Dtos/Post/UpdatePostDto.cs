@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace Dotnet7Learning.Dtos.Post
+namespace Test_Backend_NET_7.Dtos.Post
 {
     public class UpdatePostDto
     {

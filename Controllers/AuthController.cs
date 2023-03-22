@@ -7,72 +7,43 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 
 
-namespace Dotnet7Learning.Controllers
+namespace Test_Backend_NET_7.Controllers
 {
     [ApiController]
     [Route("api/[controller]")]
     public class AuthController : ControllerBase
     {
-        public static User user = new User();
+        private readonly IUserService _userService;
         private readonly IConfiguration _configuration;
-        public AuthController(IConfiguration configuration)
+
+        public AuthController(IConfiguration configuration, IUserService userService)
         {
+            _userService = userService;
             _configuration = configuration;
         }
 
         [HttpPost("register")]
-        public ActionResult<User> Register(UserDto request)
+        public async Task<ActionResult<ServiceResponse<bool>>> Register(UserDto request)
         {
-            string passwordHash = BCrypt.Net.BCrypt.HashPassword(request.Password);
-
-            user.Name = request.Name;
-            user.SurName = request.SurName;
-            user.Age = request.Age;
-            user.City = request.City;
-            user.PasswordHash = passwordHash;
-
-            return Ok(user);
+            return Ok(await _userService.Register(request));
         }
 
         [HttpPost("login")]
-        public ActionResult<User> Login(UserDto request)
+        public async Task<ActionResult<ServiceResponse<UserLoginDto>>> Login(UserDto request)
         {
-
-            if (user.Name == request.Name) //Сделать другой метод совпадений
-            {
-                return BadRequest("Wrong password or name.");
-            }
-            if (!BCrypt.Net.BCrypt.Verify(request.Password, user.PasswordHash))
-            {
-                return BadRequest("Wrong password or name.");
-            }
-
-            string token = CreateToken(user);
-
-            return Ok(token);
+            return Ok(await _userService.Login(request));
         }
 
-        private string CreateToken(User user)
+        [HttpDelete("{id}"), Authorize(Roles = "User")]
+        public async Task<ActionResult<ServiceResponse<bool>>> Delete(int id)
         {
-            List<Claim> claims = new List<Claim>
-            {
-                new Claim(ClaimTypes.Name, user.Name)
-            };
+            return Ok(await _userService.Delete(id));
+        }
 
-            var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(
-                _configuration.GetSection("Jwt:Token").Value!
-            ));
-
-            var creds = new SigningCredentials(key, SecurityAlgorithms.HmacSha512Signature);
-
-            var token = new JwtSecurityToken(
-                claims: claims,
-                expires: DateTime.Now.AddDays(1),
-                signingCredentials: creds
-            );
-
-            var jwt = new JwtSecurityTokenHandler().WriteToken(token);
-            return jwt;
+        [HttpPut("{id}"), Authorize(Roles = "User")]
+        public async Task<ActionResult<ServiceResponse<UserUpdateDto>>> Update(int id, UserDto request)
+        {
+            return Ok(await _userService.Update(id, request));
         }
     }
 }

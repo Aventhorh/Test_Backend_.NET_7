@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace Dotnet7Learning.models
+namespace Test_Backend_NET_7.models
 {
     public class Post
     {

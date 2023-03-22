@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace Dotnet7Learning
+namespace Test_Backend_NET_7
 {
     public class AutoMapperProfile : Profile
     {
@@ -11,6 +11,7 @@ namespace Dotnet7Learning
         {
             CreateMap<Post, GetPostDto>();
             CreateMap<AddPostDto, Post>();
+            CreateMap<UserDto, User>();
         }
     }
 }
