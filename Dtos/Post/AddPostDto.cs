@@ -9,5 +9,6 @@ namespace Test_Backend_NET_7.Dtos.Post
     {
         public string Name { get; set; } = string.Empty;
         public string Description { get; set; } = string.Empty;
+        public UserPostDto User { get; set; } = null!;
     }
 }

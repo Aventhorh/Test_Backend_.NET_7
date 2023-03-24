@@ -19,6 +19,7 @@ namespace Test_Backend_NET_7.Services.PostService
         public async Task<ServiceResponse<List<GetPostDto>>> AddPost(AddPostDto newPost)
         {
             var serviceResponse = new ServiceResponse<List<GetPostDto>>();
+
             var post = _mapper.Map<Post>(newPost);
 
             _context.Posts.Add(post);

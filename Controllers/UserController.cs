@@ -11,19 +11,25 @@ namespace Test_Backend_NET_7.Controllers
 {
     [ApiController]
     [Route("api/[controller]")]
-    public class AuthController : ControllerBase
+    public class UserController : ControllerBase
     {
         private readonly IUserService _userService;
         private readonly IConfiguration _configuration;
 
-        public AuthController(IConfiguration configuration, IUserService userService)
+        public UserController(IConfiguration configuration, IUserService userService)
         {
             _userService = userService;
             _configuration = configuration;
         }
 
+        [HttpGet("{id}")]
+        public async Task<ActionResult<ServiceResponse<GetUserDto>>> GetUserById(int id)
+        {
+            return Ok(await _userService.GetUserById(id));
+        }
+
         [HttpPost("register")]
-        public async Task<ActionResult<ServiceResponse<bool>>> Register(UserDto request)
+        public async Task<ActionResult<ServiceResponse<string>>> Register(UserDto request)
         {
             return Ok(await _userService.Register(request));
         }

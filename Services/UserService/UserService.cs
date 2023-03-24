@@ -4,6 +4,7 @@ using System.IdentityModel.Tokens.Jwt;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Diagnostics;
 
 namespace Test_Backend_NET_7.Services.UserService
 {
@@ -20,18 +21,38 @@ namespace Test_Backend_NET_7.Services.UserService
             _configuration = configuration;
         }
 
-        public async Task<ServiceResponse<bool>> Register(UserDto newUser)
+        public async Task<ServiceResponse<GetUserDto>> GetUserById(int id)
         {
-            var serviceResponse = new ServiceResponse<bool>();
+            var serviceResponse = new ServiceResponse<GetUserDto>();
+            var user = await _context.Users.FirstOrDefaultAsync(c => c.Id == id);
+            if (user is null)
+            {
+                serviceResponse.Success = false;
+                serviceResponse.Message = "User not found";
+                return serviceResponse;
+            }
+            var userToReturn = _mapper.Map<GetUserDto>(user);
+            serviceResponse.Data = userToReturn;
+            serviceResponse.Success = true;
+            return serviceResponse;
+        }
+
+        public async Task<ServiceResponse<string>> Register(UserDto newUser)
+        {
+            var serviceResponse = new ServiceResponse<string>();
             string passwordHash = BCrypt.Net.BCrypt.HashPassword(newUser.Password);
 
+            Random random = new Random();
+            int uuid = random.Next();
+
             var user = _mapper.Map<User>(newUser);
+            user.Id = uuid;
             user.PasswordHash = passwordHash;
 
             _context.Users.Add(user);
             await _context.SaveChangesAsync();
 
-            serviceResponse.Data = true;
+            serviceResponse.Data = "User registered in successfully";
             return serviceResponse;
         }
 

@@ -29,7 +29,7 @@ namespace Test_Backend_NET_7.Controllers
             return Ok(await _postService.GetPostById(id));
         }
 
-        [HttpPost]
+        [HttpPost, Authorize(Roles = "User")]
         public async Task<ActionResult<ServiceResponse<List<GetPostDto>>>> AddPost(AddPostDto newPost)
         {
             return Ok(await _postService.AddPost(newPost));
@@ -43,7 +43,7 @@ namespace Test_Backend_NET_7.Controllers
             return Ok(response);
         }
 
-        [HttpDelete("{id}")]
+        [HttpDelete("{id}"), Authorize(Roles = "User")]
         public async Task<ActionResult<ServiceResponse<List<GetPostDto>>>> DeletePost(int id)
         {
             var response = await _postService.DeletePost(id);
